@@ -1,0 +1,217 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Bug Bounty Recon Tool</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Share Tech Mono', monospace;
+      background: #000;
+      color: #00ff00;
+      overflow-x: hidden;
+    }
+
+    .header {
+      text-align: center;
+      padding: 30px;
+      font-size: 2em;
+      background-color: #111;
+      box-shadow: 0 2px 10px rgba(0, 255, 0, 0.2);
+      text-shadow: 0 0 10px #00ff00;
+      animation: glowText 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glowText {
+      from {
+        text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+      }
+      to {
+        text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00;
+      }
+    }
+
+    .controls {
+      padding: 20px;
+      text-align: center;
+      animation: fadeIn 2s ease-in;
+    }
+
+    .search-input {
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      border: 2px solid #00ff00;
+      border-radius: 5px;
+      background: transparent;
+      color: #00ff00;
+      margin-bottom: 20px;
+    }
+
+    .button-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-height: 70vh;
+      overflow-y: auto;
+      padding: 10px;
+      animation: fadeIn 2.5s ease-in;
+    }
+
+    .futuristic-button {
+      padding: 10px 15px;
+      font-size: 14px;
+      background-color: transparent;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .futuristic-button:hover {
+      background-color: #00ff00;
+      color: #000;
+      box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #00ff00;
+      border-top: 1px solid #00ff00;
+      margin-top: 20px;
+      animation: fadeIn 3s ease-in;
+    }
+
+    .footer a {
+      color: #00ff00;
+      text-decoration: none;
+      margin-left: 5px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .footer img {
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">[::] Full Bug Bounty Recon Tool [::]</div>
+
+  <div class="controls">
+    <input type="text" id="target" class="search-input" placeholder="Enter target domain">
+  </div>
+
+  <div class="button-grid">
+    <!-- Buttons dynamically injected by JS -->
+    <script>
+      const queries = [
+        [1, 'Directory listing vulnerabilities', 'intitle:index.of'],
+        [2, 'Exposed Configuration files', 'ext:xml | ext:conf | ext:cnf | ext:reg | ext:inf | ext:rdp | ext:cfg | ext:txt | ext:ora | ext:ini'],
+        [3, 'Exposed Database files', 'ext:sql | ext:dbf | ext:mdb'],
+        [4, 'Exposed log files', 'ext:log'],
+        [5, 'Backup and old files', 'ext:bkf | ext:bkp | ext:bak | ext:old | ext:backup'],
+        [6, 'Login pages', 'inurl:login'],
+        [7, 'SQL errors', 'intext:"sql syntax near" | intext:"syntax error has occurred" | intext:"incorrect syntax near" | intext:"unexpected end of SQL command" | intext:"Warning: mysql_connect()" | intext:"Warning: mysql_query()" | intext:"Warning: pg_connect()"'],
+        [8, 'Publicly exposed documents', 'ext:doc | ext:docx | ext:odt | ext:pdf | ext:rtf | ext:sxw | ext:psw | ext:ppt | ext:pptx | ext:pps | ext:csv'],
+        [9, 'phpinfo()', 'ext:php intitle:phpinfo "published by the PHP Group"'],
+        [10, 'Find WordPress', 'inurl:wp- | inurl:wp-content | inurl:plugins | inurl:uploads | inurl:themes | inurl:download'],
+        [11, 'Finding Backdoors', 'inurl:shell | inurl:backdoor | inurl:wso | inurl:cmd | shadow | passwd | boot.ini | inurl:backdoor'],
+        [12, 'Install / Setup files', 'inurl:readme | inurl:license | inurl:install | inurl:setup | inurl:config'],
+        [13, 'Open Redirects', 'inurl:redir | inurl:url | inurl:redirect | inurl:return | inurl:src=http | inurl:r=http'],
+        [14, 'Apache STRUTS RCE', 'ext:action | ext:struts | ext:do'],
+        [15, 'Find Pastebin entries', 'custom', 'https://www.google.com/search?q=site:pastebin.com '],
+        [16, 'Employees on LINKEDIN', 'custom', 'https://www.google.com/search?q=site:linkedin.com employees '],
+        [17, '.htaccess sensitive files', 'custom', 'https://www.google.com/search?q=inurl:"/phpinfo.php" | inurl:".htaccess" | inurl:"/.git" '],
+        [18, 'Find Subdomains', 'custom', 'https://www.google.com/search?q=site:*.' ],
+        [19, 'Find Sub-Subdomains', 'custom', 'https://www.google.com/search?q=site:*.*.'],
+        [20, 'Find WordPress #2', 'custom', 'https://www.google.com/search?q=inurl:wp-content | inurl:wp-includes '],
+        [21, 'Search in GITHUB', 'custom', 'https://github.com/search?q="*.' ],
+        [22, 'Test CrossDomain', 'custom', 'http://'],
+        [23, 'Check in ThreatCrowd', 'custom', 'http://threatcrowd.org/domain.php?domain='],
+        [24, 'Find SWF', 'custom', 'https://www.google.com/search?q=+inurl:' ],
+        [25, 'Find MIME-SWF', 'custom', 'https://yandex.com/search/?text=site:'],
+        [26, 'Find SWF links in the past', 'custom', 'https://web.archive.org/cdx/search?url='],
+        [27, 'Find MIME-SWF links in the past', 'custom', 'https://web.archive.org/cdx/search?url='],
+        [28, 'Search in Web Archive #1', 'custom', 'https://web.archive.org/web/*/(.' ],
+        [29, 'Search in Web Archive #2', 'custom', 'https://web.archive.org/web/*/' ],
+        [30, 'Certificate Transparency', 'custom', 'https://crt.sh/?q=%25.' ],
+        [31, 'Search OpenBugBounty', 'custom', 'https://www.openbugbounty.org/search/?search=' ],
+        [32, 'Search in Reddit', 'custom', 'https://www.reddit.com/search/?q=' ],
+        [33, 'Search WP Config Backup', 'custom', 'http://wwwb-dedup.us.archive.org:8083/cdx/search?url=' ],
+        [34, 'Search in Censys (IPv4)', 'custom', 'https://censys.io/ipv4?q=' ],
+        [35, 'Search in Censys (Domain)', 'custom', 'https://censys.io/domain?q=' ],
+        [36, 'Search in Censys (Certificates)', 'custom', 'https://censys.io/certificates?q=' ],
+        [37, 'Search in SHODAN', 'custom', 'https://www.shodan.io/search?query=' ],
+        [38, 'Vulnerable Servers', 'inurl:"/geoserver/ows?service=wfs"'],
+        [39, 'ArcGIS REST Services Directory', 'intext:"ArcGIS REST Services Directory" intitle:"Folder: /"'],
+        [40, 'wp-content Juicy Info', 'inurl:/wp-content/uploads/wpo_wcpdf'],
+        [41, 'main.yml file', 'intitle:"index of "main.yml"'],
+        [42, 'Admin Portal', 'inurl:/admin.aspx'],
+        [43, 'Wordpress Juicy file 1', 'inurl:/wp-content/uploads/wpo_wcpdf'],
+        [44, 'File Upload', 'inurl:uploadimage.php'],
+        [45, 'Vulnerable Wordpress Plugin', 'inurl:*/wp-content/plugins/contact-form-7/'],
+        [46, 'Sensitive File', 'intitle:index.of conf.php'],
+        [47, 'Sharing API Info', 'intitle:"Sharing API Info"'],
+        [48, 'Sensitive Admin Backup', 'intitle:"Index of" inurl:/backup/ "admin.zip"'],
+        [49, 'Github API', 'intitle:"index of" github-api'],
+        [50, 'Wordpress Juicy file 2', 'inurl:wp-content/uploads/wcpa_uploads'],
+        [51, 'Drupal Login', 'inurl:user intitle:"Drupal" intext:"Log in" -"powered by"'],
+        [52, 'Joomla Database/', 'inurl: /libraries/joomla/database/'],
+        [53, 'Sql File', 'inurl:"php?sql=select" ext:php'],
+        [54, 'Wordpress Juicy file 3', 'inurl:"wp-content" intitle:"index.of" intext:wp-config.php'],
+        [55, 'Remote procedure call protocol', 'intext:"index of" inurl:json-rpc'],
+        [56, 'Sensitive File', 'intitle:"index of" "download.php?file="'],
+        [57, 'jwks-rsa file', 'intext:"index of" inurl:jwks-rsa'],
+        [58, 'Wordpress Backup', 'inurl:"wp-content" intitle:"index.of" intext:backup'],
+        [59, 'Mysql file', 'intitle:index.of conf.mysql'],
+        [60, 'Sensitive File', 'intitle:"index of" "users.yml" | "admin.yml" | "config.yml"'],
+        [61, 'Docker-Compose yml file', 'intitle:"index of" "docker-compose.yml"'],
+        [62, 'Sensitive File', 'intext:pom.xml intitle:"index of /"'],
+        [63, 'Sensitive File', 'intext:"Index of" intext:"/etc"'],
+        [64, 'Directories containing SQL Installs and/or SQL databases', '"sql" "parent" intitle:index.of -injection']
+      ];
+
+      queries.forEach(([id, label, q, custom]) => {
+        const btn = document.createElement('button');
+        btn.className = 'futuristic-button';
+        btn.textContent = `${label}`;
+        btn.onclick = () => {
+          const domain = document.getElementById('target').value.trim();
+          if (!domain) return alert("Please enter a target domain.");
+          const url = (q === 'custom') ? `${custom}${domain}` : `https://www.google.com/search?q=site:${domain} ${q}`;
+          window.open(url, '_blank');
+        };
+        document.currentScript.parentElement.appendChild(btn);
+      });
+    </script>
+  </div>
+
+  <div class="footer">
+    Created by Shaid Mahamud |
+    <a href="https://github.com/shaid69" target="_blank">
+      <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo">
+      GitHub
+    </a>
+  </div>
+</body>
+</html>
