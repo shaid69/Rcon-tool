@@ -30,9 +30,11 @@ bug_bounty_recon_tool/
 ├── index.html      # Main interface file
 └── README.md       # Documentation file
 ```
-![image](https://github.com/user-attachments/assets/ebef0f79-b79d-4257-b457-603f77c10574)
 
 ## 🔗 Author
 
 Created by Shaid Mahamud  
 🔗 [GitHub Profile](https://github.com/shaid69)
+
+![image](https://github.com/user-attachments/assets/0e76edc9-d85a-4156-8884-44fafefaa1e6)
+
